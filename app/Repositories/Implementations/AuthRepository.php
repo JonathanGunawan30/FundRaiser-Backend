@@ -23,17 +23,32 @@ class AuthRepository implements AuthRepositoryInterface
     public function findOrCreateUserByOauth(array $oauthData): User
     {
         return DB::transaction(function () use ($oauthData) {
-            $user = User::where('email', $oauthData['email'])->first();
+            // 1. Check for existing OAuth account
+            $oauthAccount = \App\Models\OauthAccount::where('provider', $oauthData['provider'])
+                ->where('provider_id', $oauthData['provider_id'])
+                ->first();
 
-            if (!$user) {
-                $user = User::create([
-                    'name' => $oauthData['name'],
-                    'email' => $oauthData['email'],
-                    'avatar_url' => $oauthData['avatar_url'] ?? null,
-                    'status' => 'active',
-                ]);
+            if ($oauthAccount) {
+                $user = $oauthAccount->user;
+            } else {
+                // 2. Handle missing email by generating a unique placeholder if necessary
+                $email = $oauthData['email'] ?? ($oauthData['provider_id'] . '@' . $oauthData['provider'] . '.placeholder.com');
+
+                // 3. Fallback to check user by email
+                $user = User::where('email', $email)->first();
+
+                if (!$user) {
+                    // 4. Create new user
+                    $user = User::create([
+                        'name' => $oauthData['name'] ?? ('User_' . $oauthData['provider_id']),
+                        'email' => $email,
+                        'avatar_url' => $oauthData['avatar_url'] ?? null,
+                        'status' => 'active',
+                    ]);
+                }
             }
 
+            // 5. Update or create the OAuth account record linked to the user
             $user->oauthAccounts()->updateOrCreate(
                 [
                     'provider' => $oauthData['provider'],
