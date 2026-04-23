@@ -38,7 +38,7 @@ class AuthService implements AuthServiceInterface
 
         $this->authRepository->updateAdminLastLogin($admin);
 
-        $token = $admin->createToken('admin_token', ['admin'])->plainTextToken;
+        $token = Auth::guard('admin-api')->login($admin);
 
         return [
             'admin' => $admin,
@@ -64,7 +64,7 @@ class AuthService implements AuthServiceInterface
 
         $user = $this->authRepository->findOrCreateUserByOauth($oauthData);
 
-        $token = $user->createToken('user_token', ['user'])->plainTextToken;
+        $token = Auth::guard('api')->login($user);
 
         return [
             'user' => $user,
@@ -77,6 +77,6 @@ class AuthService implements AuthServiceInterface
      */
     public function logout(): void
     {
-        Auth::user()->currentAccessToken()->delete();
+        Auth::logout();
     }
 }

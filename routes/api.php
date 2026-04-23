@@ -19,10 +19,19 @@ use App\Http\Controllers\Api\OauthAccountController;
 use App\Http\Controllers\Api\CampaignCategoryController;
 use Illuminate\Support\Facades\Route;
 
+// Prevent redirection hangs on unauthenticated API requests
+Route::get('/login', function () {
+    return response()->json([
+        'status' => 'error',
+        'message' => 'Unauthenticated',
+        'errors' => null,
+    ], 401);
+})->name('login');
+
 Route::prefix('auth')->group(function () {
     Route::post('login', [AuthController::class, 'adminLogin']);
 
-    Route::middleware('auth:sanctum')->group(function () {
+    Route::middleware('auth:admin-api')->group(function () {
         Route::post('logout', [AuthController::class, 'logout']);
     });
 });

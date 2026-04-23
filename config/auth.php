@@ -47,10 +47,15 @@ return [
             'driver' => 'session',
             'provider' => 'admins',
         ],
-        
+
         'api' => [
-            'driver' => 'sanctum',
+            'driver' => 'jwt',
             'provider' => 'users',
+        ],
+
+        'admin-api' => [
+            'driver' => 'jwt',
+            'provider' => 'admins',
         ],
     ],
 
