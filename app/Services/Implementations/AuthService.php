@@ -7,6 +7,8 @@ use App\Repositories\Interfaces\AuthRepositoryInterface;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Auth\AuthenticationException;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 class AuthService implements AuthServiceInterface
 {
@@ -25,15 +27,11 @@ class AuthService implements AuthServiceInterface
         $admin = $this->authRepository->findAdminByEmail($credentials['email']);
 
         if (!$admin || !Hash::check($credentials['password'], $admin->password)) {
-            throw ValidationException::withMessages([
-                'email' => ['Invalid credentials.'],
-            ]);
+            abort(401, 'Invalid credentials.');
         }
 
         if (!$admin->is_active) {
-            throw ValidationException::withMessages([
-                'email' => ['Account is inactive.'],
-            ]);
+            abort(401, 'Account is inactive.');
         }
 
         $this->authRepository->updateAdminLastLogin($admin);
