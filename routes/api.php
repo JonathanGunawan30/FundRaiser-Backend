@@ -33,6 +33,13 @@ Route::prefix('auth')->group(function () {
 
     Route::middleware('auth:admin-api')->group(function () {
         Route::post('logout', [AuthController::class, 'logout']);
+
+        // FAQs
+        Route::prefix('faqs')->group(function () {
+            Route::post('/', [FaqController::class, 'store']);
+            Route::put('/{id}', [FaqController::class, 'update']);
+            Route::delete('/{id}', [FaqController::class, 'destroy']);
+        });
     });
 });
 

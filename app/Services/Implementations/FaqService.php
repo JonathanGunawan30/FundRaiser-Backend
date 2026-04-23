@@ -46,4 +46,28 @@ class FaqService implements FaqServiceInterface
     {
         return $this->faqRepository->search($keyword, $perPage);
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function createFaq(array $data): Faq
+    {
+        return $this->faqRepository->create($data);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function updateFaq(int $id, array $data): Faq
+    {
+        return $this->faqRepository->update($id, $data);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function deleteFaq(int $id): bool
+    {
+        return $this->faqRepository->delete($id);
+    }
 }

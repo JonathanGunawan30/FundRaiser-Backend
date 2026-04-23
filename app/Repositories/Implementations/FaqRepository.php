@@ -32,4 +32,31 @@ class FaqRepository implements FaqRepositoryInterface
         return Faq::where('question', 'like', "%{$keyword}%")
             ->paginate($perPage);
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function create(array $data): Faq
+    {
+        return Faq::create($data);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function update(int $id, array $data): Faq
+    {
+        $faq = Faq::findOrFail($id);
+        $faq->update($data);
+        return $faq;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function delete(int $id): bool
+    {
+        $faq = Faq::findOrFail($id);
+        return $faq->delete();
+    }
 }
