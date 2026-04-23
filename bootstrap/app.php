@@ -15,11 +15,21 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+        $exceptions->render(function (\Symfony\Component\HttpKernel\Exception\HttpException $e, $request) {
+            if ($request->is('api/*')) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => $e->getMessage() ?: 'An error occurred',
+                    'errors' => null,
+                ], $e->getStatusCode());
+            }
+        });
+
         $exceptions->render(function (\Illuminate\Auth\AuthenticationException $e, $request) {
             if ($request->expectsJson()) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Unauthenticated',
+                    'message' => $e->getMessage() ?: 'Unauthenticated',
                     'errors' => null,
                 ], 401);
             }
@@ -39,7 +49,7 @@ return Application::configure(basePath: dirname(__DIR__))
             if ($request->is('api/*')) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Resource not found',
+                    'message' => $e->getMessage() ?: 'Resource not found',
                     'errors' => null,
                 ], 404);
             }
@@ -49,7 +59,7 @@ return Application::configure(basePath: dirname(__DIR__))
             if ($request->is('api/*')) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Access denied',
+                    'message' => $e->getMessage() ?: 'Access denied',
                     'errors' => null,
                 ], 403);
             }

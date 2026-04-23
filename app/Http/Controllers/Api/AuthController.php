@@ -28,13 +28,9 @@ class AuthController extends Controller
      */
     public function adminLogin(LoginRequest $request): JsonResponse
     {
-        try {
-            $result = $this->authService->adminLogin($request->validated());
+        $result = $this->authService->adminLogin($request->validated());
 
-            return $this->success($result, 'Login successful');
-        } catch (\Exception $e) {
-            return $this->error($e->getMessage(), 422);
-        }
+        return $this->success($result, 'Login successful');
     }
 
     /**
