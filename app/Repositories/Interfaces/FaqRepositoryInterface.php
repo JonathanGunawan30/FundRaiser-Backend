@@ -31,4 +31,29 @@ interface FaqRepositoryInterface
      * @return LengthAwarePaginator
      */
     public function search(string $keyword, int $perPage): LengthAwarePaginator;
+
+    /**
+     * Create a new FAQ.
+     *
+     * @param array $data
+     * @return Faq
+     */
+    public function create(array $data): Faq;
+
+    /**
+     * Update an existing FAQ.
+     *
+     * @param int $id
+     * @param array $data
+     * @return Faq
+     */
+    public function update(int $id, array $data): Faq;
+
+    /**
+     * Delete an FAQ.
+     *
+     * @param int $id
+     * @return bool
+     */
+    public function delete(int $id): bool;
 }
